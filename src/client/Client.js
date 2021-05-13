@@ -1,27 +1,14 @@
-/*
-   This is where all the links will be shown to the public
-*/
-
 import React from 'react'
+import { gql, useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
+
 import styled from 'styled-components'
-
-import Avatar from '@material-ui/core/Avatar'
-// import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-// import TextField from '@material-ui/core/TextField'
-// import FormControlLabel from '@material-ui/core/FormControlLabel'
-// import Checkbox from '@material-ui/core/Checkbox'
-// import Link from '@material-ui/core/Link'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-// import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-import Container from '@material-ui/core/Container'
+import Typography from '@material-ui/core/Typography'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
 
-// temp
-import SonGoku from '../assets/songoku.png'
+import Loading from '../components/Loading'
 
 // TODO can add to root as footer
 function Copyright() {
@@ -37,82 +24,106 @@ function Copyright() {
   )
 }
 
-const useStyles = makeStyles((theme) => ({
-  // paper: {
-  //   marginTop: theme.spacing(8),
-  //   // display: 'flex',
-  //   // // flexDirection: 'column',
-  //   // alignItems: 'center',
-
-  // },
-  paper: {
-    padding: theme.spacing(2),
+const useStyles = makeStyles({
+  root: {
+    minWidth: 300,
+    maxWidth: 350,
+    height: 400,
+  },
+  // TODO: mobile
+  innerRoot: {
+    maxWidth: 275,
+    height: 50,
+    background: '#0073e6',
+    color: 'white',
+    margin: 'auto',
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    cursor: 'pointer',
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+  title: {
+    textAlign: 'center',
   },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}))
+})
 
-const links = [
-  'https://www.youtube.com/',
-  'https://www.google.com/',
-  'https://www.facebook.com/',
-  'https://www.instagram.com/',
-]
+// TODO change query / resolver names
+const GET_USER_URLS = gql`
+  query getUser($username: String!) {
+    getUser(username: $username) {
+      username
+      links {
+        description
+        url
+      }
+    }
+  }
+`
 
 function Client() {
+  // TODO username as /:id param
+  const { loading, error, data } = useQuery(GET_USER_URLS, {
+    variables: {
+      username: 'ronmaple',
+    },
+  })
+
+  if (error) {
+    // todo handle error
+    console.error(error)
+    return <div>Error!</div>
+  }
   const classes = useStyles()
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        {/* <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar> */}
-        <Avatar src={SonGoku} />
-        <Typography component="h1" variant="h5">
-          Son Goku
+  const UserLink = ({ description, url }, key) => (
+    <Card
+      className={classes.innerRoot}
+      onClick={() => {
+        window.location = `https://${url}`
+        return null
+      }}
+      key={key}
+    >
+      <CardContent>
+        <Typography variant="h5" component="h2">
+          {description || url}
         </Typography>
-      </div>
-
-      <Grid item xs={12}>
-        {links.map((link) => (
-          <LinkContainer>
-            <Link to={link}>{link}</Link>
-          </LinkContainer>
-        ))}
-      </Grid>
-
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+      </CardContent>
+    </Card>
+  )
+  return (
+    <FlexContainer>
+      <Card className={classes.root}>
+        <CardContent>
+          <Typography
+            className={classes.title}
+            color="textPrimary"
+            gutterBottom
+          >
+            {loading ? 'Fetching user...' : data.getUser.username}
+          </Typography>
+        </CardContent>
+        <LinkContainer>
+          {loading ? <Loading /> : data.getUser.links.map(UserLink)}
+        </LinkContainer>
+      </Card>
+    </FlexContainer>
   )
 }
 
-const LinkContainer = styled.div`
-  width: 90%;
-  max-width: 300px;
-  height: 50px;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 0px 4px 0px; // Quitlet's card box-shadow
+const FlexContainer = styled.div`
   display: flex;
-  justify-content: center;
+  background: #e6f3ff;
   align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100wh;
+`
 
-  a {
-    color: inherit; /* blue colors for links too */
-    text-decoration: inherit; /* no underline */
+const LinkContainer = styled.div`
+  max-height: 90%;
+  margin: auto;
+  > div {
+    margin: 0.25em auto;
   }
 `
+
 export default Client

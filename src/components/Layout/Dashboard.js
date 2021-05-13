@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core'
-import NavBar from '../Navbar'
 import TopBar from '../Topbar'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
-    display: 'flex',
     height: '100%',
     overflow: 'hidden',
     width: '100%',
@@ -17,9 +15,6 @@ const useStyles = makeStyles((theme) => ({
     flex: '1 1 auto',
     overflow: 'hidden',
     paddingTop: 64,
-    [theme.breakpoints.up('lg')]: {
-      paddingLeft: 256,
-    },
   },
   contentContainer: {
     display: 'flex',
@@ -35,15 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardLayout = ({ children }) => {
   const classes = useStyles()
-  const [isMobileNavOpen, setMobileNavOpen] = useState(false)
+  const [isMobileNavOpen, setMobileNavOpen] = useState(false) // Delete?
 
   return (
     <div className={classes.root}>
-      <TopBar onMobileNavOpen={() => setMobileNavOpen(true)} />
-      <NavBar
-        onMobileClose={() => setMobileNavOpen(false)}
-        openMobile={isMobileNavOpen}
-      />
+      <TopBar onMobileNavOpen={() => setMobileNavOpen(false)} />
       <div className={classes.wrapper}>
         <div className={classes.contentContainer}>
           <div className={classes.content}>{children}</div>

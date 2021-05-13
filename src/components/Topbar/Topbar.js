@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useHistory } from 'react-router-dom'
 import clsx from 'clsx'
 import {
   AppBar,
@@ -9,52 +9,61 @@ import {
   IconButton,
   Toolbar,
   makeStyles,
+  Typography,
+  Button,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
 import InputIcon from '@material-ui/icons/Input'
 // import { ReactComponent as Logo } from '../Logo/logo.svg'
 
-const useStyles = makeStyles(() => ({
-  root: {},
-  avatar: {
-    width: 60,
-    height: 60,
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    // borderBottom: `1px solid ${theme.palette.divider}`,
+    borderBottom: '0.2em solid black',
+    // background: 'green',
+  },
+  bar: {
+    background: 'red',
+  },
+  toolbar: {
+    flexWrap: 'wrap',
+  },
+  toolbarTitle: {
+    flexGrow: 1,
   },
 }))
 
-const TopBar = ({ className, onMobileNavOpen, ...rest }) => {
+const TopBar = ({ /*className,*/ onMobileNavOpen, ...rest }) => {
+  const history = useHistory()
   const classes = useStyles()
   const [notifications] = useState([])
+  // console.log('classes', classes, 'className', className)
 
+  // simulate logged in state
+  const loggedIn = true
   return (
     <AppBar
-      className={clsx(classes.root, className)}
+      position="static"
+      color="default"
       elevation={0}
-      {...rest}
+      className={classes.appBar}
     >
-      <Toolbar>
-        <RouterLink to="/">{/* <Logo /> */}</RouterLink>
-        <Box flexGrow={1} />
-        <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge
-              badgeContent={notifications.length}
-              color="primary"
-              variant="dot"
-            >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton color="inherit">
-            <InputIcon />
-          </IconButton>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton color="inherit" onClick={onMobileNavOpen}>
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+      <Toolbar className={classes.toolbar}>
+        <Typography
+          variant="h6"
+          color="inherit"
+          noWrap
+          className={classes.toolbarTitle}
+        >
+          AllMyBacons
+        </Typography>
+        <Button component={RouterLink} to="/login">
+          Login
+        </Button>
+        <Button component={RouterLink} to="/client">
+          Client
+        </Button>
       </Toolbar>
     </AppBar>
   )

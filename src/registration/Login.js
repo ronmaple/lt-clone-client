@@ -1,5 +1,8 @@
 import React from 'react'
 import { Link as RouterLink, useHistory } from 'react-router-dom'
+
+import { login } from '../utils/auth'
+
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import {
@@ -26,6 +29,7 @@ const Login = () => {
   const classes = useStyles()
   const history = useHistory()
 
+  console.log('login', login)
   return (
     <Box
       display="flex"
@@ -36,8 +40,8 @@ const Login = () => {
       <Container maxWidth="sm">
         <Formik
           initialValues={{
-            email: 'demo@devias.io',
-            password: 'Password123',
+            email: '',
+            password: '',
           }}
           validationSchema={Yup.object().shape({
             email: Yup.string()
@@ -48,9 +52,10 @@ const Login = () => {
               .max(255)
               .required('Password is required'),
           })}
-          onSubmit={() => {
-            // navigate('/app/dashboard', { replace: true })
-            history.push('/')
+          onSubmit={async ({ email, password }) => {
+            // console.log('event', event)
+            // console.log('values', values)
+            await login(email, password)
           }}
         >
           {({
@@ -61,63 +66,69 @@ const Login = () => {
             isSubmitting,
             touched,
             values,
-          }) => (
-            <form onSubmit={handleSubmit}>
-              <Box mb={3}>
-                <Typography color="textPrimary" variant="h2">
-                  Sign in
-                </Typography>
-              </Box>
-              <TextField
-                error={Boolean(touched.email && errors.email)}
-                fullWidth
-                helperText={touched.email && errors.email}
-                label="Email Address"
-                margin="normal"
-                name="email"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                type="email"
-                value={values.email}
-                variant="outlined"
-              />
-              <TextField
-                error={Boolean(touched.password && errors.password)}
-                fullWidth
-                helperText={touched.password && errors.password}
-                label="Password"
-                margin="normal"
-                name="password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                type="password"
-                value={values.password}
-                variant="outlined"
-              />
-              <Box my={2}>
-                <Button
-                  color="primary"
-                  disabled={isSubmitting}
+          }) => {
+            // console.log('errors', errors)
+            // console.log('values', values)
+            // console.log('touched', touched)
+            // console.log('handleSubmit', handleSubmit)
+            return (
+              <form onSubmit={handleSubmit}>
+                <Box mb={3}>
+                  <Typography color="textPrimary" variant="h2">
+                    Sign in
+                  </Typography>
+                </Box>
+                <TextField
+                  error={Boolean(touched.email && errors.email)}
                   fullWidth
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                >
-                  Sign in now
-                </Button>
-              </Box>
-              <Typography color="textSecondary" variant="body1">
-                Don&apos;t have an account?{' '}
-                <Link
-                  component={RouterLink}
-                  to="/register"
-                  variant="h6"
-                >
-                  Sign up
-                </Link>
-              </Typography>
-            </form>
-          )}
+                  helperText={touched.email && errors.email}
+                  label="Email Address"
+                  margin="normal"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="email"
+                  value={values.email}
+                  variant="outlined"
+                />
+                <TextField
+                  error={Boolean(touched.password && errors.password)}
+                  fullWidth
+                  helperText={touched.password && errors.password}
+                  label="Password"
+                  margin="normal"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="password"
+                  value={values.password}
+                  variant="outlined"
+                />
+                <Box my={2}>
+                  <Button
+                    color="primary"
+                    disabled={isSubmitting}
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                  >
+                    Sign in now
+                  </Button>
+                </Box>
+                <Typography color="textSecondary" variant="body1">
+                  Don&apos;t have an account?{' '}
+                  <Link
+                    component={RouterLink}
+                    to="/register"
+                    variant="h6"
+                  >
+                    Sign up
+                  </Link>
+                </Typography>
+              </form>
+            )
+          }}
         </Formik>
       </Container>
     </Box>

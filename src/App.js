@@ -1,19 +1,15 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useEffect } from 'react'
+import { ApolloProvider } from '@apollo/client'
 import { Helmet } from 'react-helmet'
+import styled from 'styled-components'
 
-import Auth from './utils/auth'
+import { client } from './utils/apollo'
 import Routes from './routes'
 import Theme from './styles/Theme'
 
-// TODO: separate route file, with code split
 function App() {
   // TODO
-  // 1. Configure Redux
-
-  // 2. Styled components
-
-  // 3. React router / Loadable
+  // 3. React router-done / Loadable
 
   // 4. helmet
 
@@ -24,26 +20,13 @@ function App() {
         <title>Lt Clone</title>
         <meta name="Lt Clone" content="Lt Clone" />
       </Helmet>
-      <Auth>
+      <ApolloProvider client={client}>
         <Theme>
           <Routes />
         </Theme>
-      </Auth>
+      </ApolloProvider>
     </>
   )
 }
-
-// Testing out styled components / css
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const BlueContainer = styled.div`
-  background: ${(props) => props.theme.colors.aliceBlue};
-  height: 100px;
-  width: 100;
-`
 
 export default App
